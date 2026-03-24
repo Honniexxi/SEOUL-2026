@@ -19,17 +19,16 @@
             theme: {
                 extend: {
                     colors: {
-                        // 春日櫻花配色系 (Sakura Theme)
                         sakura: {
-                            bg: '#FFF5F6',      // 櫻花白背景
-                            primary: '#FFA6B6', // 櫻花粉
-                            secondary: '#FFC4C4',// 櫻花橘粉
-                            blue: '#AEC6CF',    // 春天藍
-                            mint: '#B5EAD7',    // 春日綠
-                            purple: '#CBAACB',  // 丁香紫
-                            yellow: '#FFDFD3',  // 暖陽黃
-                            dark: '#6D5B60',    // 深紫褐(文字)
-                            gray: '#BCAAA4'     // 暖灰
+                            bg: '#FFF5F6',      
+                            primary: '#FFA6B6', 
+                            secondary: '#FFC4C4',
+                            blue: '#AEC6CF',    
+                            mint: '#B5EAD7',    
+                            purple: '#CBAACB',  
+                            yellow: '#FFDFD3',  
+                            dark: '#6D5B60',    
+                            gray: '#BCAAA4'     
                         }
                     },
                     borderRadius: { '4xl': '2.5rem' },
@@ -58,7 +57,7 @@
         body::after {
             content: "";
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 245, 246, 0.88); /* 柔和的櫻花白遮罩 */
+            background: rgba(255, 245, 246, 0.88); 
             z-index: -1;
         }
         .no-scrollbar::-webkit-scrollbar { display: none; } 
@@ -383,7 +382,7 @@
     <script>
         let currentDayId = 'day1';
         let currentMainTab = 'schedule';
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbyASk1Xy9alF48M_fmQNq8N--zyOBu-jELYbtMXUGa7V4YYuAoGaav7MXZnI2wU5D_M0w/exec'; 
+        const scriptURL = 'YOUR_NEW_GOOGLE_SCRIPT_URL'; 
 
         function switchMainTab(tabId) {
             currentMainTab = tabId;
@@ -436,10 +435,6 @@
             const modal = document.getElementById('flash-card-modal');
             modal.classList.remove('hidden');
             setTimeout(() => modal.classList.remove('opacity-0'), 10);
-        }
-        
-        function showTaxiCard(name, addr) {
-            showFlashCard('請載我到這裡', '기사님, 여기로 가주세요.\n(' + addr + ')');
         }
 
         function closeFlashCard() {
@@ -757,24 +752,47 @@
                         textEl.innerHTML = `${min}°C ~ ${max}°C | ${getWeatherDesc(code)}`;
                     }
                     if(adviceEl) {
-                        adviceEl.innerText = getWeatherAdvice(code, min, max);
+                        adviceEl.innerText = getWeatherAdvice(code, min, max, dayNum);
                     }
                 }
             });
         }
         
-        function getWeatherAdvice(code, min, max) {
+        function getWeatherAdvice(code, min, max, dayNum) {
             let advice = [];
+            let isBadWeather = false;
+
             if ([51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82, 95, 96, 99].includes(code)) {
-                advice.push("☔ 帶雨具");
+                advice.push("☔ 記得帶把傘");
+                isBadWeather = true;
             } else if ([71, 73, 75, 77, 85, 86].includes(code)) {
-                advice.push("❄️ 下雪了");
+                advice.push("❄️ 下雪注意保暖");
+                isBadWeather = true;
             }
+
             if (max <= 5) {
-                advice.push("🧣 極凍!帶暖暖包");
+                advice.push("🧣 極凍!必備暖暖包");
+                isBadWeather = true;
             } else if (max <= 10) {
-                advice.push("🧥 穿大衣");
-            } 
+                advice.push("🧥 穿大衣防風");
+            } else if (max >= 25) {
+                advice.push("☀️ 注意防曬");
+            } else if ((max - min) >= 8) {
+                advice.push("🧥 溫差大，洋蔥穿搭");
+            }
+
+            // 如果沒有極端壞天氣，就給予鼓勵話語
+            if (!isBadWeather) {
+                const quotes = {
+                    1: "✨ 第一天！帶著愉快的心情出門吧",
+                    2: "📸 天氣舒爽，多拍些美照留念",
+                    3: "🌸 享受當下，好好體驗首爾的春天",
+                    4: "🛍️ 把握時間，想吃的想買的別猶豫",
+                    5: "🎒 今天早點出發吧！行程快結束了"
+                };
+                advice.push(quotes[dayNum] || "🌸 舒適春日好天氣");
+            }
+
             return advice.join(" | ");
         }
 
