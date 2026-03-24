@@ -150,11 +150,11 @@
         </h1>
         
         <div id="day-selector" class="relative flex overflow-x-auto no-scrollbar gap-3 px-4 pb-2 md:justify-center transition-all duration-300">
-            <button onclick="switchDay('day1', this)" data-day="day1" class="nav-card active flex-shrink-0 w-16 h-20 flex flex-col items-center justify-center"><span class="text-[10px] font-bold text-gray-400 mb-1">12/12</span><span class="font-black text-xl day-label">D1</span></button>
-            <button onclick="switchDay('day2', this)" data-day="day2" class="nav-card flex-shrink-0 w-16 h-20 flex flex-col items-center justify-center"><span class="text-[10px] font-bold text-gray-400 mb-1">12/13</span><span class="font-black text-xl day-label">D2</span></button>
-            <button onclick="switchDay('day3', this)" data-day="day3" class="nav-card flex-shrink-0 w-16 h-20 flex flex-col items-center justify-center"><span class="text-[10px] font-bold text-gray-400 mb-1">12/14</span><span class="font-black text-xl day-label">D3</span></button>
-            <button onclick="switchDay('day4', this)" data-day="day4" class="nav-card flex-shrink-0 w-16 h-20 flex flex-col items-center justify-center"><span class="text-[10px] font-bold text-gray-400 mb-1">12/15</span><span class="font-black text-xl day-label">D4</span></button>
-            <button onclick="switchDay('day5', this)" data-day="day5" class="nav-card flex-shrink-0 w-16 h-20 flex flex-col items-center justify-center"><span class="text-[10px] font-bold text-gray-400 mb-1">12/16</span><span class="font-black text-xl day-label">D5</span></button>
+            <button onclick="switchDay('day1', this)" data-day="day1" class="nav-card active flex-shrink-0 w-16 h-20 flex flex-col items-center justify-center"><span class="text-[10px] font-bold text-gray-400 mb-1">4/10</span><span class="font-black text-xl day-label">D1</span></button>
+            <button onclick="switchDay('day2', this)" data-day="day2" class="nav-card flex-shrink-0 w-16 h-20 flex flex-col items-center justify-center"><span class="text-[10px] font-bold text-gray-400 mb-1">4/11</span><span class="font-black text-xl day-label">D2</span></button>
+            <button onclick="switchDay('day3', this)" data-day="day3" class="nav-card flex-shrink-0 w-16 h-20 flex flex-col items-center justify-center"><span class="text-[10px] font-bold text-gray-400 mb-1">4/12</span><span class="font-black text-xl day-label">D3</span></button>
+            <button onclick="switchDay('day4', this)" data-day="day4" class="nav-card flex-shrink-0 w-16 h-20 flex flex-col items-center justify-center"><span class="text-[10px] font-bold text-gray-400 mb-1">4/13</span><span class="font-black text-xl day-label">D4</span></button>
+            <button onclick="switchDay('day5', this)" data-day="day5" class="nav-card flex-shrink-0 w-16 h-20 flex flex-col items-center justify-center"><span class="text-[10px] font-bold text-gray-400 mb-1">4/14</span><span class="font-black text-xl day-label">D5</span></button>
         </div>
     </div>
 
@@ -523,14 +523,10 @@
             const linkHtml = mapUrl ? ` <a href="${mapUrl}" target="_blank" class="map-link text-sakura-primary hover:text-pink-500 transition"><i class="fas fa-location-arrow ml-1 text-xs"></i></a>` : '';
             const addressHtml = item.Address ? `<div class="text-[10px] text-gray-400 font-bold mt-1 flex items-center bg-gray-50 px-2 py-1 rounded-lg w-fit border border-gray-100"><i class="fas fa-map-pin mr-1 text-gray-300"></i>${item.Address}</div>` : '';
             
-            // ★★★ V19 關鍵更新：將 Note 中的 \n (換行) 拆解成多個小標籤 ★★★
             let noteHtml = '';
             if (item.Note) {
-                // 將 Note 字串依照換行符號 (\n) 分割成陣列，並濾掉空白行
                 const notesArray = item.Note.toString().split('\n').filter(n => n.trim() !== '');
-                
-                // 將每個非空白的提示轉換成一個獨立的標籤，並組合起來
-                noteHtml = '<div class="flex flex-wrap gap-1 mt-2">'; // 使用 flex-wrap 讓多個標籤可以自動換行
+                noteHtml = '<div class="flex flex-wrap gap-1 mt-2">';
                 notesArray.forEach(noteText => {
                     noteHtml += `<div class="bg-sakura-bg px-2 py-1 rounded-lg text-[10px] font-bold text-gray-500 inline-flex items-center border border-pink-50"><i class="fas fa-comment-dots mr-1 text-sakura-primary"></i>${noteText.trim()}</div>`;
                 });
@@ -592,7 +588,6 @@
             `;
         }
 
-        // ================= Checklist Logic =================
         function renderChecklist(excelItems) {
             const excelContainer = document.getElementById('checklist-excel-container');
             const customContainer = document.getElementById('checklist-custom-container');
