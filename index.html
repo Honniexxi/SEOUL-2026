@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Seoul Trip 2026 🇰🇷</title>
+    
+    <link rel="icon" type="image/png" href="https://img.icons8.com/color/96/south-korea.png">
+    <link rel="apple-touch-icon" href="https://img.icons8.com/color/180/south-korea.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Varela+Round&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        // 春日櫻花配色系 (Sakura Theme)
+                        sakura: {
+                            bg: '#FFF5F6',      // 櫻花白背景
+                            primary: '#FFA6B6', // 櫻花粉
+                            secondary: '#FFC4C4',// 櫻花橘粉
+                            blue: '#AEC6CF',    // 春天藍
+                            mint: '#B5EAD7',    // 春日綠
+                            purple: '#CBAACB',  // 丁香紫
+                            yellow: '#FFDFD3',  // 暖陽黃
+                            dark: '#6D5B60',    // 深紫褐(文字)
+                            gray: '#BCAAA4'     // 暖灰
+                        }
+                    },
+                    borderRadius: { '4xl': '2.5rem' },
+                    fontFamily: {
+                        'sans': ['"Varela Round"', '"Noto Sans TC"', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        html, body {
+            height: 100%;
+            overflow-x: hidden; 
+        }
+        body { 
+            background-color: #FFF5F6; 
+            color: #6D5B60;
+            background-image: 
+                radial-gradient(#B5EAD7 2px, transparent 2px),
+                radial-gradient(#FFA6B6 2px, transparent 2px);
+            background-size: 40px 40px;
+            background-position: 0 0, 20px 20px;
+            padding-bottom: 0;
+        }
+        body::after {
+            content: "";
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 245, 246, 0.88); /* 柔和的櫻花白遮罩 */
+            z-index: -1;
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; } 
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .card-sticker {
+            background-color: #FFFFFF;
+            border-radius: 1.5rem;
+            box-shadow: 4px 4px 0px rgba(255, 166, 182, 0.15), 0 2px 10px rgba(0,0,0,0.03);
+            border: 3px solid #FFF;
+            transition: transform 0.2s;
+        }
+        .nav-card { transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); transform: scale(0.95); border-radius: 1.25rem; background: white; border: 2px solid #FDF0F2; } 
+        .nav-card.active { transform: scale(1.05) translateY(-5px); background-color: #FFF; border-color: #FFA6B6; color: #F7788A; box-shadow: 0 8px 15px -3px rgba(255, 166, 182, 0.4); }
+        .nav-card.active span.day-label { color: #F7788A; font-weight: 900; font-size: 1.4rem; }
+
+        .page-section { display: none; animation: popUp 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); } 
+        .page-section.active { display: block; } 
+        @keyframes popUp { from { opacity: 0; transform: scale(0.9) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        
+        .timeline-item { position: relative; padding-left: 3.8rem; border-left: 4px dashed #FFDFD3; padding-bottom: 2.5rem; } 
+        .timeline-item:last-child { border-left: none; padding-bottom: 0; }
+        
+        .time-bubble {
+            position: absolute; left: -1.2rem; top: -0.2rem;
+            background: #FFF;
+            border: 2px solid #B5EAD7;
+            color: #6D5B60;
+            font-size: 0.75rem;
+            font-weight: 800;
+            padding: 0.3rem 0.6rem;
+            border-radius: 1rem;
+            box-shadow: 2px 2px 0 #B5EAD7;
+            z-index: 5;
+            min-width: 3.5rem;
+            text-align: center;
+        }
+
+        .transit-info { 
+            background: #F4FAFC; 
+            border-radius: 1.5rem; padding: 1rem; 
+            border: 2px dashed #AEC6CF; 
+            display: flex; align-items: center; margin-bottom: 1.5rem; 
+            box-shadow: 4px 4px 0 #AEC6CF; 
+            transform: rotate(-1deg);
+        }
+        
+        .map-link { color: #FFA6B6; border-bottom: 3px dotted #FFA6B6; font-weight: 800; transition: all 0.2s; }
+        .map-link:hover { color: #F7788A; border-bottom-style: solid; }
+        
+        .bottom-nav-item { color: #C4B9BC; transition: all 0.3s; }
+        .bottom-nav-item.active { color: #6D5B60; transform: translateY(-8px); }
+        .bottom-nav-item.active .icon-box { 
+            background: linear-gradient(135deg, #FFA6B6 0%, #FFC4C4 100%); 
+            color: white; 
+            box-shadow: 0 6px 15px rgba(255, 166, 182, 0.5); 
+            transform: scale(1.2) rotate(-5deg);
+        }
+        
+        .check-item { transition: all 0.3s; border: 2px solid #FDF0F2; background-color: #FFF; border-radius: 1.2rem; margin-bottom: 0.8rem; }
+        .check-item:active { transform: scale(0.98); }
+        .check-item.checked { opacity: 0.6; background-color: #FAFAFA; border-color: transparent; }
+        .check-item.checked span { text-decoration: line-through; color: #CCC; }
+        .check-item i.fa-check-circle { display: none; }
+        .check-item.checked i.fa-check-circle { display: inline-block; color: #B5EAD7; font-size: 1.4rem; }
+        .check-item.checked i.fa-circle { display: none; }
+
+        input { border: 2px solid #F3EAEB; transition: all 0.3s; border-radius: 1rem; }
+        input:focus { border-color: #FFC4C4; box-shadow: 0 0 0 4px rgba(255, 196, 196, 0.3); outline: none; }
+
+        details > summary { list-style: none; cursor: pointer; outline: none; }
+        details > summary::-webkit-details-marker { display: none; }
+        details[open] summary ~ * { animation: sweep .3s ease-in-out; }
+        @keyframes sweep { 0% {opacity: 0; transform: translateY(-10px)} 100% {opacity: 1; transform: translateY(0)} }
+
+        #flash-card-modal { transition: opacity 0.3s ease; }
+        #flash-card-modal.hidden { pointer-events: none; opacity: 0; }
+        
+        padding-top: env(safe-area-inset-top); 
+        body { padding-bottom: calc(12rem + env(safe-area-inset-bottom)); }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <!-- Header -->
+    <div id="top-header" class="bg-white/80 backdrop-blur-md pt-4 pb-2 sticky top-0 z-40 shadow-sm border-b-4 border-sakura-mint rounded-b-[2.5rem]" style="padding-top: max(1rem, env(safe-area-inset-top));">
+        <h1 class="relative text-center text-2xl font-black text-sakura-dark mb-4 tracking-widest flex justify-center items-center drop-shadow-sm">
+            <span class="bg-sakura-primary text-white w-10 h-10 rounded-full flex items-center justify-center mr-2 shadow-md transform -rotate-12 text-lg"><i class="fas fa-plane"></i></span>
+            SEOUL <span class="text-sakura-primary mx-1 font-mono">2026</span> 🌸
+        </h1>
+        
+        <!-- Day Selector -->
+        <div id="day-selector" class="relative flex overflow-x-auto no-scrollbar gap-3 px-4 pb-2 md:justify-center transition-all duration-300">
+            <button onclick="switchDay('day1', this)" data-day="day1" class="nav-card active flex-shrink-0 w-16 h-20 flex flex-col items-center justify-center"><span class="text-[10px] font-bold text-gray-400 mb-1">12/12</span><span class="font-black text-xl day-label">D1</span></button>
+            <button onclick="switchDay('day2', this)" data-day="day2" class="nav-card flex-shrink-0 w-16 h-20 flex flex-col items-center justify-center"><span class="text-[10px] font-bold text-gray-400 mb-1">12/13</span><span class="font-black text-xl day-label">D2</span></button>
+            <button onclick="switchDay('day3', this)" data-day="day3" class="nav-card flex-shrink-0 w-16 h-20 flex flex-col items-center justify-center"><span class="text-[10px] font-bold text-gray-400 mb-1">12/14</span><span class="font-black text-xl day-label">D3</span></button>
+            <button onclick="switchDay('day4', this)" data-day="day4" class="nav-card flex-shrink-0 w-16 h-20 flex flex-col items-center justify-center"><span class="text-[10px] font-bold text-gray-400 mb-1">12/15</span><span class="font-black text-xl day-label">D4</span></button>
+            <button onclick="switchDay('day5', this)" data-day="day5" class="nav-card flex-shrink-0 w-16 h-20 flex flex-col items-center justify-center"><span class="text-[10px] font-bold text-gray-400 mb-1">12/16</span><span class="font-black text-xl day-label">D5</span></button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="p-4 md:p-6 max-w-2xl mx-auto min-h-[60vh]">
+        
+        <!-- Day 1-5 (行程內容) -->
+        <div id="page-day1" class="page-section active space-y-5">
+            <div id="weather-card-day1" class="card-sticker p-4 bg-gradient-to-r from-pink-50 to-white flex justify-between items-center relative overflow-hidden border-l-4 border-l-sakura-primary">
+                <div class="flex items-center z-10"><span class="text-4xl mr-4" id="weather-icon-day1">🌤️</span><div><p class="font-black text-gray-700 text-lg">Day 1 預報</p><p class="text-xs text-gray-500 font-bold" id="weather-text-day1">載入中...</p><div class="bg-pink-100 text-pink-600 text-[10px] font-bold px-2 py-1 rounded-lg mt-1 inline-block" id="weather-advice-day1"></div></div></div>
+                <i class="fas fa-sun absolute -right-6 -bottom-6 text-9xl text-pink-100 opacity-60 rotate-12"></i>
+            </div>
+            <div id="container-day1" class="card-sticker p-6 relative overflow-hidden bg-white/90"></div>
+        </div>
+        <div id="page-day2" class="page-section space-y-5"><div id="weather-card-day2" class="card-sticker p-4 bg-gradient-to-r from-blue-50 to-white flex justify-between items-center relative border-l-4 border-l-sakura-blue"><div class="flex items-center z-10"><span class="text-4xl mr-4" id="weather-icon-day2">🌤️</span><div><p class="font-black text-gray-700 text-lg">Day 2 預報</p><p class="text-xs text-gray-500 font-bold" id="weather-text-day2">...</p><div class="bg-blue-100 text-blue-600 text-[10px] font-bold px-2 py-1 rounded-lg mt-1 inline-block" id="weather-advice-day2"></div></div></div></div><div id="container-day2" class="card-sticker p-6 relative bg-white/90"></div></div>
+        <div id="page-day3" class="page-section space-y-5"><div id="weather-card-day3" class="card-sticker p-4 bg-gradient-to-r from-green-50 to-white flex justify-between items-center relative border-l-4 border-l-sakura-mint"><div class="flex items-center z-10"><span class="text-4xl mr-4" id="weather-icon-day3">🌤️</span><div><p class="font-black text-gray-700 text-lg">Day 3 預報</p><p class="text-xs text-gray-500 font-bold" id="weather-text-day3">...</p><div class="bg-green-100 text-green-600 text-[10px] font-bold px-2 py-1 rounded-lg mt-1 inline-block" id="weather-advice-day3"></div></div></div></div><div id="container-day3" class="card-sticker p-6 relative bg-white/90"></div></div>
+        <div id="page-day4" class="page-section space-y-5"><div id="weather-card-day4" class="card-sticker p-4 bg-gradient-to-r from-purple-50 to-white flex justify-between items-center relative border-l-4 border-l-sakura-purple"><div class="flex items-center z-10"><span class="text-4xl mr-4" id="weather-icon-day4">🌤️</span><div><p class="font-black text-gray-700 text-lg">Day 4 預報</p><p class="text-xs text-gray-500 font-bold" id="weather-text-day4">...</p><div class="bg-purple-100 text-purple-600 text-[10px] font-bold px-2 py-1 rounded-lg mt-1 inline-block" id="weather-advice-day4"></div></div></div></div><div id="container-day4" class="card-sticker p-6 relative bg-white/90"></div></div>
+        <div id="page-day5" class="page-section space-y-5"><div id="weather-card-day5" class="card-sticker p-4 bg-gradient-to-r from-orange-50 to-white flex justify-between items-center relative border-l-4 border-l-sakura-secondary"><div class="flex items-center z-10"><span class="text-4xl mr-4" id="weather-icon-day5">🌤️</span><div><p class="font-black text-gray-700 text-lg">Day 5 預報</p><p class="text-xs text-gray-500 font-bold" id="weather-text-day5">...</p><div class="bg-orange-100 text-orange-600 text-[10px] font-bold px-2 py-1 rounded-lg mt-1 inline-block" id="weather-advice-day5"></div></div></div></div><div id="container-day5" class="card-sticker p-6 relative bg-white/90"></div></div>
+
+        <!-- Information (資訊) -->
+        <div id="page-notes" class="page-section space-y-5">
+            
+            <!-- 1. SES 快速通關情報 -->
+            <div class="card-sticker p-5 bg-gradient-to-br from-blue-50 to-white border-l-4 border-l-sakura-blue relative overflow-hidden">
+                <div class="absolute right-0 top-0 opacity-10 text-9xl text-sakura-blue -mr-4 -mt-4 rotate-12"><i class="fas fa-passport"></i></div>
+                <h3 class="text-lg font-black text-blue-500 mb-2 flex items-center"><i class="fas fa-bolt mr-2 text-yellow-400"></i>台灣旅客專屬福利！</h3>
+                <div class="text-sm text-gray-600 font-bold leading-relaxed relative z-10">
+                    <p class="mb-2">仁川機場 <span class="text-blue-500 bg-blue-100 px-1 rounded">T2 第二航廈</span> 入關審查處新開了 6 個專門為台灣開的 <span class="text-sakura-dark underline decoration-wavy decoration-sakura-primary">SES 櫃檯</span>。</p>
+                    <p class="text-xs bg-white/60 p-2 rounded-lg border border-blue-100 text-gray-500">
+                        <i class="fas fa-camera mr-1"></i> 按指紋 + 拍照 <i class="fas fa-arrow-right mx-1 text-xs"></i> 獲得貼紙 <i class="fas fa-arrow-right mx-1 text-xs"></i> <strong class="text-blue-500">直接走自動通關！</strong>
+                    </p>
+                </div>
+            </div>
+
+            <!-- 2. 生存韓語字卡 -->
+            <div class="card-sticker p-6 bg-white/95">
+                <h2 class="text-2xl font-black text-sakura-dark mb-6 flex items-center"><span class="bg-green-100 w-12 h-12 flex items-center justify-center rounded-full mr-3 text-green-500 shadow-sm"><i class="fas fa-comment-dots fa-bounce"></i></span>生存韓語</h2>
+                <div class="space-y-4">
+                    
+                    <!-- 餐廳系列 -->
+                    <details class="group bg-white border-2 border-orange-100 rounded-2xl overflow-hidden shadow-sm open:shadow-md transition-all">
+                        <summary class="flex items-center justify-between p-4 cursor-pointer bg-orange-50/50 hover:bg-orange-50 transition">
+                            <div class="flex items-center"><span class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-orange-400 shadow-sm mr-3 text-lg"><i class="fas fa-utensils"></i></span><span class="font-black text-gray-700">餐廳點餐</span></div>
+                            <i class="fas fa-chevron-down text-orange-300 group-open:rotate-180 transition-transform"></i>
+                        </summary>
+                        <div class="p-4 pt-2 border-t border-orange-100 bg-white grid grid-cols-2 gap-3">
+                            <button onclick="showFlashCard('請給我菜單', '메뉴판 좀 주세요')" class="bg-gray-50 hover:bg-orange-100 border border-gray-100 p-3 rounded-xl text-left transition group/btn"><span class="block text-xs text-gray-400 mb-1">請給我菜單</span><span class="block text-sm font-black text-gray-700 group-hover/btn:text-orange-500">메뉴판...</span></button>
+                            <button onclick="showFlashCard('我要點這個', '이거 주세요')" class="bg-gray-50 hover:bg-orange-100 border border-gray-100 p-3 rounded-xl text-left transition group/btn"><span class="block text-xs text-gray-400 mb-1">我要點這個</span><span class="block text-sm font-black text-gray-700 group-hover/btn:text-orange-500">이거 주세요</span></button>
+                            <button onclick="showFlashCard('不要太辣', '덜 맵게 해주세요')" class="bg-gray-50 hover:bg-orange-100 border border-gray-100 p-3 rounded-xl text-left transition group/btn"><span class="block text-xs text-gray-400 mb-1">不要太辣</span><span class="block text-sm font-black text-gray-700 group-hover/btn:text-orange-500">덜 맵게...</span></button>
+                            <button onclick="showFlashCard('我要結帳', '계산해 주세요')" class="bg-gray-50 hover:bg-orange-100 border border-gray-100 p-3 rounded-xl text-left transition group/btn"><span class="block text-xs text-gray-400 mb-1">我要結帳</span><span class="block text-sm font-black text-gray-700 group-hover/btn:text-orange-500">계산해 주세요</span></button>
+                        </div>
+                    </details>
+
+                    <!-- 購物與交通 -->
+                    <details class="group bg-white border-2 border-blue-100 rounded-2xl overflow-hidden shadow-sm open:shadow-md transition-all">
+                        <summary class="flex items-center justify-between p-4 cursor-pointer bg-blue-50/50 hover:bg-blue-50 transition">
+                            <div class="flex items-center"><span class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-blue-400 shadow-sm mr-3 text-lg"><i class="fas fa-shopping-bag"></i></span><span class="font-black text-gray-700">購物 & 交通</span></div>
+                            <i class="fas fa-chevron-down text-blue-300 group-open:rotate-180 transition-transform"></i>
+                        </summary>
+                        <div class="p-4 pt-2 border-t border-blue-100 bg-white grid grid-cols-2 gap-3">
+                            <button onclick="showFlashCard('可以刷卡嗎?', '카드 결제 되나요?')" class="bg-gray-50 hover:bg-blue-100 border border-gray-100 p-3 rounded-xl text-left transition group/btn"><span class="block text-xs text-gray-400 mb-1">可以刷卡嗎?</span><span class="block text-sm font-black text-gray-700 group-hover/btn:text-blue-500">카드 되나요?</span></button>
+                            <button onclick="showFlashCard('請問有這個嗎?', '이거 있나요?')" class="bg-gray-50 hover:bg-blue-100 border border-gray-100 p-3 rounded-xl text-left transition group/btn"><span class="block text-xs text-gray-400 mb-1">請問有這個嗎?</span><span class="block text-sm font-black text-gray-700 group-hover/btn:text-blue-500">이거 있나요?</span></button>
+                            <button onclick="showFlashCard('請載我去這裡', '기사님, 여기로 가주세요')" class="col-span-2 bg-yellow-50 hover:bg-yellow-100 border border-yellow-100 p-3 rounded-xl text-center transition group/btn"><span class="block text-xs text-gray-400 mb-1"><i class="fas fa-taxi mr-1"></i>給司機看</span><span class="block text-lg font-black text-gray-800 group-hover/btn:text-yellow-600">請載我去這裡</span></button>
+                        </div>
+                    </details>
+                </div>
+            </div>
+
+            <!-- 3. 住宿資訊 -->
+            <div class="card-sticker p-6 bg-white/95">
+                <h2 class="text-2xl font-black text-sakura-dark mb-6 flex items-center"><span class="bg-purple-100 w-12 h-12 flex items-center justify-center rounded-full mr-3 text-purple-500 shadow-sm"><i class="fas fa-bed"></i></span>住宿資訊</h2>
+                <div class="space-y-4">
+                    <!-- 住宿 A: Check In Seoul -->
+                    <details class="group bg-white border-2 border-orange-100 rounded-2xl overflow-hidden shadow-sm open:shadow-md transition-all">
+                        <summary class="flex items-center justify-between p-4 cursor-pointer bg-orange-50/50 hover:bg-orange-50 transition">
+                            <div class="flex items-center"><span class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-orange-400 shadow-sm mr-3 text-lg"><i class="fas fa-home"></i></span><div><h3 class="font-black text-gray-700">Check In Seoul</h3><span class="text-[10px] text-gray-400 font-bold">체크인 서울 홍대</span></div></div>
+                            <i class="fas fa-chevron-down text-orange-300 group-open:rotate-180 transition-transform"></i>
+                        </summary>
+                        <div class="p-4 pt-0 border-t border-orange-100 bg-white">
+                            <div class="flex gap-2 my-3">
+                                <a href="https://map.naver.com/v5/search/서울 마포구 동교로25길 9" target="_blank" class="flex-1 bg-green-400 text-white py-2 rounded-xl text-xs font-black text-center shadow-sm hover:bg-green-500 transition flex items-center justify-center"><i class="fas fa-map-marked-alt mr-1"></i> 地圖</a>
+                                <button onclick="copyText('서울 마포구 동교로25길 9')" class="flex-1 bg-gray-100 text-gray-600 py-2 rounded-xl text-xs font-black hover:bg-gray-200 transition"><i class="fas fa-copy mr-1"></i> 複製地址</button>
+                                <button onclick="showTaxiCard('Check In Seoul', '서울 마포구 동교로25길 9')" class="flex-1 bg-sakura-secondary text-white py-2 rounded-xl text-xs font-black hover:bg-orange-400 transition shadow-sm"><i class="fas fa-taxi mr-1"></i> 找車</button>
+                            </div>
+                            <div class="text-xs text-gray-500 space-y-2 font-bold bg-gray-50 p-3 rounded-xl">
+                                <p><i class="fas fa-map-pin mr-2 text-orange-400 w-4"></i> 9, Donggyo-ro 25-gil, Mapo-gu</p>
+                                <p><i class="fas fa-link mr-2 text-orange-400 w-4"></i> <a href="https://www.agoda.com/en-in/check-in-seoul/hotel/seoul-kr.html?cid=1844104&ds=UxEEKWH0yOnE9OZa" target="_blank" class="text-orange-500 underline hover:text-orange-600">Agoda 訂房資訊</a></p>
+                                <p><i class="fas fa-key mr-2 text-orange-400 w-4"></i> 大門密碼: <span class="font-black text-gray-400 bg-white border border-gray-200 px-1 rounded select-all">入住前提供</span></p>
+                                <p><i class="fas fa-door-closed mr-2 text-orange-400 w-4"></i> 房門密碼: <span class="font-black text-gray-400 bg-white border border-gray-200 px-1 rounded select-all">入住前提供</span></p>
+                            </div>
+                        </div>
+                    </details>
+
+                    <!-- 住宿 B: 那比青年旅館 -->
+                    <details class="group bg-white border-2 border-sakura-primary rounded-2xl overflow-hidden shadow-sm open:shadow-md transition-all">
+                        <summary class="flex items-center justify-between p-4 cursor-pointer bg-pink-50/50 hover:bg-pink-50 transition">
+                            <div class="flex items-center"><span class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-pink-400 shadow-sm mr-3 text-lg"><i class="fas fa-hotel"></i></span><div><h3 class="font-black text-gray-700">弘大那比青年旅館</h3><span class="text-[10px] text-gray-400 font-bold">Nabi Hostel</span></div></div>
+                            <i class="fas fa-chevron-down text-pink-300 group-open:rotate-180 transition-transform"></i>
+                        </summary>
+                        <div class="p-4 pt-0 border-t border-pink-100 bg-white">
+                            <div class="flex gap-2 my-3">
+                                <a href="https://map.naver.com/v5/search/서울 마포구 양화로 177-1" target="_blank" class="flex-1 bg-green-400 text-white py-2 rounded-xl text-xs font-black text-center shadow-sm hover:bg-green-500 transition flex items-center justify-center"><i class="fas fa-map-marked-alt mr-1"></i> 地圖</a>
+                                <button onclick="copyText('서울 마포구 양화로 177-1')" class="flex-1 bg-gray-100 text-gray-600 py-2 rounded-xl text-xs font-black hover:bg-gray-200 transition"><i class="fas fa-copy mr-1"></i> 複製地址</button>
+                                <button onclick="showTaxiCard('弘大那比青年旅館', '서울 마포구 양화로 177-1')" class="flex-1 bg-sakura-primary text-white py-2 rounded-xl text-xs font-black hover:bg-pink-400 transition shadow-sm"><i class="fas fa-taxi mr-1"></i> 找車</button>
+                            </div>
+                            <div class="text-xs text-gray-500 space-y-2 font-bold bg-gray-50 p-3 rounded-xl">
+                                <p><i class="fas fa-map-marker-alt mr-2 text-pink-400 w-4"></i> 서울 마포구 양화로 177-1</p>
+                                <p><i class="fas fa-phone-alt mr-2 text-pink-400 w-4"></i> 02-3142-8889</p>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+            </div>
+
+            <!-- 4. 緊急救援 -->
+            <div class="card-sticker p-6 bg-red-50 border-2 border-red-100 relative overflow-hidden">
+                <div class="absolute -right-4 -top-4 text-8xl text-red-200 opacity-20 rotate-12"><i class="fas fa-ambulance"></i></div>
+                <h2 class="text-xl font-black text-red-500 mb-4 flex items-center"><i class="fas fa-exclamation-triangle mr-2"></i> 緊急救援</h2>
+                <div class="grid grid-cols-3 gap-2">
+                    <a href="tel:112" class="bg-white border border-red-100 p-2 rounded-xl flex flex-col items-center justify-center hover:bg-red-400 hover:text-white transition group shadow-sm text-red-500"><i class="fas fa-user-shield text-2xl mb-1 group-hover:text-white"></i><span class="text-[10px] font-black">警察 112</span></a>
+                    <a href="tel:119" class="bg-white border border-red-100 p-2 rounded-xl flex flex-col items-center justify-center hover:bg-red-400 hover:text-white transition group shadow-sm text-red-500"><i class="fas fa-first-aid text-2xl mb-1 group-hover:text-white"></i><span class="text-[10px] font-black">救護 119</span></a>
+                    <a href="tel:01090802761" class="bg-white border border-red-100 p-2 rounded-xl flex flex-col items-center justify-center hover:bg-red-400 hover:text-white transition group shadow-sm text-red-500"><i class="fas fa-phone-volume text-2xl mb-1 group-hover:text-white"></i><span class="text-[10px] font-black">駐韓代表</span></a>
+                </div>
+                <p class="text-[10px] text-red-400 mt-3 text-center font-bold">駐韓代表處緊急電話：010-9080-2761</p>
+            </div>
+        </div>
+
+        <!-- Checklist Content -->
+        <div id="page-checklist" class="page-section space-y-5">
+            <div class="card-sticker p-6 bg-white/95">
+                <h2 class="text-2xl font-black text-sakura-dark mb-6 flex items-center"><span class="bg-sakura-mint w-12 h-12 flex items-center justify-center rounded-full mr-3 text-green-600 shadow-sm"><i class="fas fa-backpack fa-bounce"></i></span>必備清單</h2>
+                
+                <div class="flex gap-2 mb-6 p-1 bg-white rounded-2xl border-2 border-sakura-mint shadow-sm">
+                    <input type="text" id="new-item-input" placeholder="還有什麼要帶的？" class="flex-1 p-3 bg-transparent border-none text-sm font-bold text-gray-700 focus:ring-0">
+                    <button onclick="addCustomItem()" class="bg-sakura-mint text-green-700 w-10 h-10 rounded-xl flex items-center justify-center hover:bg-green-300 transition shadow-md m-1"><i class="fas fa-plus"></i></button>
+                </div>
+
+                <div class="mb-3 flex items-center"><span class="bg-sakura-blue text-blue-600 text-[10px] font-black px-2 py-1 rounded mr-2">PUBLIC</span> <span class="text-xs font-bold text-gray-400">大家都要帶 (Excel)</span></div>
+                <div id="checklist-excel-container" class="space-y-2 mb-6"></div>
+
+                <div class="mb-3 flex items-center justify-between"><div class="flex items-center"><span class="bg-sakura-purple text-purple-600 text-[10px] font-black px-2 py-1 rounded mr-2">PRIVATE</span> <span class="text-xs font-bold text-gray-400">我的專屬</span></div><i class="fas fa-lock text-gray-300 text-xs"></i></div>
+                <div id="checklist-custom-container" class="space-y-2"></div>
+                
+                <div class="flex justify-center mt-8">
+                    <button onclick="resetChecklist()" class="text-xs text-gray-400 font-bold hover:text-red-400 transition bg-gray-50 px-4 py-2 rounded-full border border-gray-200"><i class="fas fa-trash-restore mr-1"></i> 重置打勾</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Finance Content (5人記帳升級版) -->
+        <div id="page-finance" class="page-section space-y-5">
+            <div class="card-sticker p-6 bg-white/95">
+                <h2 class="text-2xl font-black text-sakura-dark mb-6 flex items-center"><span class="bg-sakura-yellow w-12 h-12 flex items-center justify-center rounded-full mr-3 text-orange-500 shadow-sm"><i class="fas fa-piggy-bank fa-bounce"></i></span>記帳小幫手</h2>
+                <form id="expense-form" class="space-y-5 font-bold">
+                    <div><label class="block text-xs text-gray-400 mb-1 pl-1 uppercase tracking-wider font-black">Item Name</label><div class="relative"><i class="fas fa-tag absolute left-4 top-1/2 -translate-y-1/2 text-gray-300"></i><input type="text" id="item" placeholder="買了什麼？" class="w-full p-4 pl-10 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-sakura-secondary transition text-gray-700" required></div></div>
+                    <div><label class="block text-xs text-gray-400 mb-1 pl-1 uppercase tracking-wider font-black">Amount (KRW)</label><div class="relative"><span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 font-black">₩</span><input type="number" id="cost" placeholder="0" class="w-full p-4 pl-10 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-sakura-secondary text-xl font-black text-gray-700" required oninput="updateExpensePreview()"></div><div id="expense-twd-preview" class="text-xs text-orange-500 font-bold mt-2 ml-1 hidden bg-orange-50 inline-block px-3 py-1 rounded-full border border-orange-100"><i class="fas fa-equals mr-1"></i> 台幣約 <span id="preview-amount">0</span> 元</div></div>
+                    
+                    <!-- 付款人：更新為 5 人版本 -->
+                    <div>
+                        <label class="block text-xs text-gray-400 mb-2 pl-1 uppercase tracking-wider font-black">Paid By</label>
+                        <div class="grid grid-cols-3 gap-2">
+                            <label class="cursor-pointer relative group">
+                                <input type="radio" name="payer" value="Honnie" class="peer sr-only" required>
+                                <div class="p-2 text-center bg-gray-50 border-2 border-gray-100 rounded-2xl peer-checked:bg-sakura-secondary peer-checked:border-orange-200 peer-checked:text-white transition text-gray-400 font-black group-hover:bg-white group-hover:shadow-sm">
+                                    <div class="mb-1"><i class="fas fa-user-circle text-lg"></i></div><span class="text-xs">Honnie</span>
+                                </div>
+                            </label>
+                            <label class="cursor-pointer relative group">
+                                <input type="radio" name="payer" value="Emily" class="peer sr-only">
+                                <div class="p-2 text-center bg-gray-50 border-2 border-gray-100 rounded-2xl peer-checked:bg-sakura-primary peer-checked:border-pink-300 peer-checked:text-white transition text-gray-400 font-black group-hover:bg-white group-hover:shadow-sm">
+                                    <div class="mb-1"><i class="fas fa-user-circle text-lg"></i></div><span class="text-xs">Emily</span>
+                                </div>
+                            </label>
+                            <label class="cursor-pointer relative group">
+                                <input type="radio" name="payer" value="J" class="peer sr-only">
+                                <div class="p-2 text-center bg-gray-50 border-2 border-gray-100 rounded-2xl peer-checked:bg-sakura-mint peer-checked:border-green-300 peer-checked:text-gray-700 transition text-gray-400 font-black group-hover:bg-white group-hover:shadow-sm">
+                                    <div class="mb-1"><i class="fas fa-user-circle text-lg"></i></div><span class="text-xs">J</span>
+                                </div>
+                            </label>
+                            <label class="cursor-pointer relative group">
+                                <input type="radio" name="payer" value="77" class="peer sr-only">
+                                <div class="p-2 text-center bg-gray-50 border-2 border-gray-100 rounded-2xl peer-checked:bg-sakura-purple peer-checked:border-purple-300 peer-checked:text-white transition text-gray-400 font-black group-hover:bg-white group-hover:shadow-sm">
+                                    <div class="mb-1"><i class="fas fa-user-circle text-lg"></i></div><span class="text-xs">77</span>
+                                </div>
+                            </label>
+                            <!-- 公費佔據兩格寬度 -->
+                            <label class="cursor-pointer relative group col-span-2">
+                                <input type="radio" name="payer" value="公費" class="peer sr-only" checked>
+                                <div class="p-2 h-full flex flex-col justify-center text-center bg-gray-50 border-2 border-gray-100 rounded-2xl peer-checked:bg-sakura-blue peer-checked:border-blue-300 peer-checked:text-white transition text-gray-400 font-black group-hover:bg-white group-hover:shadow-sm">
+                                    <div class="flex items-center justify-center gap-2"><i class="fas fa-users text-lg"></i><span class="text-sm">公費</span></div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full bg-gradient-to-r from-sakura-primary to-sakura-purple text-white p-4 rounded-2xl font-black text-lg hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition flex justify-center items-center shadow-md shadow-pink-100 mt-2"><i class="fas fa-paper-plane mr-2"></i> 記一筆</button>
+                </form>
+            </div>
+            <div id="message-area" class="hidden p-4 rounded-2xl text-center text-sm font-bold transition-all shadow-sm border mt-4"></div>
+        </div>
+
+        <!-- Tools -->
+        <div id="page-tools" class="page-section space-y-5">
+            <div class="card-sticker p-6 bg-white/95">
+                <h2 class="text-2xl font-black text-sakura-dark mb-6 flex items-center"><span class="bg-sakura-blue w-12 h-12 flex items-center justify-center rounded-full mr-3 text-blue-500 shadow-sm"><i class="fas fa-calculator fa-flip" style="--fa-animation-duration: 3s;"></i></span>匯率換算</h2>
+                <div class="bg-white p-6 rounded-[2rem] border-2 border-gray-100 shadow-inner mb-6 relative overflow-hidden">
+                    <div class="absolute -right-4 -top-4 w-20 h-20 bg-blue-50 rounded-full blur-xl"></div>
+                    <label class="text-xs text-gray-400 font-black block mb-2 text-center uppercase tracking-widest">Exchange Rate</label>
+                    <div class="flex items-center justify-center"><span class="text-gray-400 font-bold mr-2">1 TWD ≈</span><input type="number" id="rate-input" value="42.5" class="w-24 bg-transparent text-center font-black text-3xl text-blue-500 border-b-2 border-blue-200 focus:border-blue-500 focus:outline-none"><span class="text-gray-400 font-bold ml-2">KRW</span></div>
+                    <div class="text-center mt-3"><button onclick="fetchLiveRate()" class="text-[10px] bg-gray-100 text-gray-500 px-3 py-1 rounded-full hover:bg-blue-100 hover:text-blue-500 transition font-bold"><i class="fas fa-sync-alt mr-1" id="rate-loading"></i> 更新匯率</button></div>
+                </div>
+                <div class="space-y-3">
+                    <div class="bg-white p-4 rounded-3xl border-2 border-gray-100 flex items-center shadow-sm group focus-within:border-blue-300 transition"><div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-500 font-black text-xs mr-3">₩</div><div class="flex-1"><label class="text-[10px] text-gray-400 font-bold block">KOREAN WON</label><input type="number" id="krw-input" class="w-full bg-transparent text-2xl font-black text-gray-700 focus:outline-none" placeholder="0"></div></div>
+                    <div class="flex justify-center text-gray-300"><i class="fas fa-arrow-down fa-bounce"></i></div>
+                    <div class="bg-blue-50 p-4 rounded-3xl border-2 border-blue-100 flex items-center shadow-sm"><div class="w-10 h-10 bg-blue-200 rounded-full flex items-center justify-center text-blue-600 font-black text-xs mr-3">NT$</div><div class="flex-1"><label class="text-[10px] text-blue-400 font-bold block">TAIWAN DOLLAR</label><input type="text" id="twd-input" class="w-full bg-transparent text-2xl font-black text-blue-600 focus:outline-none" placeholder="0" readonly></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Flash Card Modal -->
+    <div id="flash-card-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4" onclick="closeFlashCard()">
+        <div class="bg-white w-full max-w-sm rounded-[2rem] p-8 text-center relative shadow-2xl transform transition-all scale-100" onclick="event.stopPropagation()">
+            <button onclick="closeFlashCard()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-3xl"><i class="fas fa-times-circle"></i></button>
+            <div id="flash-card-icon" class="bg-sakura-primary w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-4xl shadow-md"><i class="fas fa-comment"></i></div>
+            <h3 id="flash-card-title" class="text-lg font-bold text-gray-400 mb-2">標題</h3>
+            <div class="bg-gray-50 border-4 border-gray-100 rounded-3xl p-6 mb-6"><p id="flash-card-korean" class="text-3xl font-black text-gray-800 leading-snug break-keep select-all">韓文內容</p></div>
+            <p class="text-xs text-gray-400 animate-pulse">請將此畫面出示給對方看</p>
+        </div>
+    </div>
+
+    <!-- Bottom Nav -->
+    <nav class="fixed bottom-0 w-full bg-white/90 backdrop-blur-xl border-t border-white/50 pb-[env(safe-area-inset-bottom)] pt-2 z-50 rounded-t-[2rem] shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.1)]">
+        <div class="grid grid-cols-5 h-20 max-w-2xl mx-auto px-2">
+            <button onclick="switchMainTab('schedule')" id="tab-schedule" class="bottom-nav-item active flex flex-col items-center justify-center group w-full"><div class="icon-box w-12 h-12 rounded-2xl flex items-center justify-center mb-1 transition-all duration-300 bg-transparent text-gray-300 group-hover:text-gray-400"><i class="fas fa-map-marked-alt text-xl"></i></div><span class="text-[9px] font-black tracking-wide">行程</span></button>
+            <button onclick="switchMainTab('checklist')" id="tab-checklist" class="bottom-nav-item flex flex-col items-center justify-center group w-full"><div class="icon-box w-12 h-12 rounded-2xl flex items-center justify-center mb-1 transition-all duration-300 bg-transparent text-gray-300 group-hover:text-gray-400"><i class="fas fa-check-square text-xl"></i></div><span class="text-[9px] font-black tracking-wide">清單</span></button>
+            <button onclick="switchMainTab('notes')" id="tab-notes" class="bottom-nav-item flex flex-col items-center justify-center group w-full"><div class="icon-box w-12 h-12 rounded-2xl flex items-center justify-center mb-1 transition-all duration-300 bg-transparent text-gray-300 group-hover:text-gray-400"><i class="fas fa-info-circle text-xl"></i></div><span class="text-[9px] font-black tracking-wide">資訊</span></button>
+            <button onclick="switchMainTab('finance')" id="tab-finance" class="bottom-nav-item flex flex-col items-center justify-center group w-full"><div class="icon-box w-12 h-12 rounded-2xl flex items-center justify-center mb-1 transition-all duration-300 bg-transparent text-gray-300 group-hover:text-gray-400"><i class="fas fa-won-sign text-xl"></i></div><span class="text-[9px] font-black tracking-wide">記帳</span></button>
+            <button onclick="switchMainTab('tools')" id="tab-tools" class="bottom-nav-item flex flex-col items-center justify-center group w-full"><div class="icon-box w-12 h-12 rounded-2xl flex items-center justify-center mb-1 transition-all duration-300 bg-transparent text-gray-300 group-hover:text-gray-400"><i class="fas fa-exchange-alt text-xl"></i></div><span class="text-[9px] font-black tracking-wide">匯率</span></button>
+        </div>
+    </nav>
+
+    <div class="h-[200px] w-full pointer-events-none"></div>
+
+    <script>
+        let currentDayId = 'day1';
+        let currentMainTab = 'schedule';
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbyASk1Xy9alF48M_fmQNq8N--zyOBu-jELYbtMXUGa7V4YYuAoGaav7MXZnI2wU5D_M0w/exec'; 
+
+        function switchMainTab(tabId) {
+            currentMainTab = tabId;
+            document.querySelectorAll('.bottom-nav-item').forEach(el => el.classList.remove('active'));
+            document.getElementById('tab-' + tabId).classList.add('active');
+            document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active'));
+            
+            const daySelector = document.getElementById('day-selector');
+            if (tabId === 'schedule') {
+                document.getElementById('page-' + currentDayId).classList.add('active');
+                daySelector.classList.remove('hidden', 'opacity-0', 'h-0');
+                daySelector.classList.add('flex', 'opacity-100');
+            } else {
+                document.getElementById('page-' + tabId).classList.add('active');
+                daySelector.classList.remove('flex', 'opacity-100');
+                daySelector.classList.add('hidden', 'opacity-0', 'h-0');
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function switchDay(dayId, btnElement) {
+            currentDayId = dayId;
+            if (currentMainTab !== 'schedule') switchMainTab('schedule');
+            document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active'));
+            document.getElementById('page-' + dayId).classList.add('active');
+            document.querySelectorAll('.nav-card').forEach(el => el.classList.remove('active'));
+            if(btnElement) btnElement.classList.add('active');
+            else document.querySelector(`.nav-card[data-day="${dayId}"]`).classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function copyText(text) {
+            const tempInput = document.createElement("input");
+            tempInput.value = text;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy"); 
+            document.body.removeChild(tempInput);
+            alert("已複製：" + text);
+        }
+
+        function showFlashCard(title, koreanText) {
+            document.getElementById('flash-card-title').textContent = title;
+            document.getElementById('flash-card-korean').textContent = koreanText;
+            const iconEl = document.getElementById('flash-card-icon');
+            if(title.includes('車') || title.includes('司機')) iconEl.innerHTML = '<i class="fas fa-taxi"></i>';
+            else if(title.includes('吃') || title.includes('菜單') || title.includes('辣')) iconEl.innerHTML = '<i class="fas fa-utensils"></i>';
+            else if(title.includes('買') || title.includes('刷卡') || title.includes('有這個')) iconEl.innerHTML = '<i class="fas fa-shopping-bag"></i>';
+            else iconEl.innerHTML = '<i class="fas fa-comment"></i>';
+            const modal = document.getElementById('flash-card-modal');
+            modal.classList.remove('hidden');
+            setTimeout(() => modal.classList.remove('opacity-0'), 10);
+        }
+        
+        function showTaxiCard(name, addr) {
+            showFlashCard('請載我到這裡', '기사님, 여기로 가주세요.\n(' + addr + ')');
+        }
+
+        function closeFlashCard() {
+            const modal = document.getElementById('flash-card-modal');
+            modal.classList.add('opacity-0');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        }
+
+        function fetchData() {
+            if(scriptURL === '' || scriptURL === 'YOUR_NEW_GOOGLE_SCRIPT_URL') {
+                document.querySelectorAll('[id^="container-day"]').forEach(el => {
+                    el.innerHTML = '<div class="text-center text-gray-400 font-bold py-10">請設定 Google Script URL</div>';
+                });
+                renderChecklist([]); 
+                return;
+            }
+
+            fetch(scriptURL)
+            .then(response => response.json())
+            .then(data => {
+                if(data.itinerary) renderItinerary(data.itinerary);
+                if(data.checklist) renderChecklist(data.checklist);
+            })
+            .catch(err => { console.error('Fetch error:', err); });
+        }
+
+        function renderItinerary(data) {
+             ['day1', 'day2', 'day3', 'day4', 'day5'].forEach(day => {
+                const container = document.getElementById(`container-${day}`);
+                if(container) container.innerHTML = '';
+            });
+
+            const groupedData = {};
+            data.forEach(item => {
+                if (!groupedData[item.Day]) groupedData[item.Day] = [];
+                groupedData[item.Day].push(item);
+            });
+
+            Object.keys(groupedData).forEach(day => {
+                const container = document.getElementById(`container-${day}`);
+                if(!container) return;
+                
+                const headerData = groupedData[day].find(i => i.Type === 'header');
+                const headerHtml = headerData ? `
+                    <h2 class="text-2xl font-black text-sakura-dark mb-8 flex items-center pl-2 relative">
+                        <span class="absolute -left-1 w-1 h-8 bg-gradient-to-b from-sakura-purple to-sakura-primary rounded-full"></span>
+                        ${headerData.Title}
+                        <i class="fas fa-leaf text-sakura-mint ml-2 text-xl absolute -top-4 -left-2 rotate-[-20deg]"></i>
+                    </h2>
+                ` : '';
+
+                const itemsHtml = groupedData[day]
+                    .filter(i => i.Type !== 'header')
+                    .map(item => renderItem(item))
+                    .join('');
+
+                container.innerHTML = headerHtml + `<div class="">${itemsHtml}</div>`;
+            });
+        }
+
+        function formatTimeDisplay(val) {
+            if (!val) return "";
+            const str = val.toString();
+            if (str.includes('T') || str.includes('GMT') || str.includes('1899')) {
+                const date = new Date(str);
+                if (!isNaN(date.getTime())) {
+                    let timePart = str.split('T')[1]; 
+                    if (timePart) return timePart.substring(0, 5); 
+                }
+            }
+            if (str.match(/^\d{1,2}:\d{2}:\d{2}$/)) return str.substring(0, 5);
+            return str;
+        }
+
+        function renderItem(item) {
+            let mapUrl = item.Link;
+            if (!mapUrl && item.Address) {
+                mapUrl = `https://map.naver.com/v5/search/${encodeURIComponent(item.Address)}`;
+            }
+
+            const linkHtml = mapUrl ? ` <a href="${mapUrl}" target="_blank" class="map-link text-sakura-primary hover:text-pink-500 transition"><i class="fas fa-location-arrow ml-1 text-xs"></i></a>` : '';
+            const addressHtml = item.Address ? `<div class="text-[10px] text-gray-400 font-bold mt-1 flex items-center bg-gray-50 px-2 py-1 rounded-lg w-fit border border-gray-100"><i class="fas fa-map-pin mr-1 text-gray-300"></i>${item.Address}</div>` : '';
+            const noteHtml = item.Note ? `<div class="bg-sakura-bg px-2 py-1 rounded-lg text-[10px] font-bold text-gray-500 mt-2 inline-flex items-center border border-pink-50"><i class="fas fa-comment-dots mr-1 text-sakura-primary"></i>${item.Note}</div>` : '';
+            
+            const displayTime = formatTimeDisplay(item.Time);
+
+            let iconClass = "bg-gray-200 text-gray-500"; 
+            let iconContent = '<i class="fas fa-map-pin"></i>';
+
+            const t = item.Type ? item.Type.toLowerCase().trim() : 'spot';
+            if (t === 'transit') {
+                return `
+                    <div class="transit-info group">
+                        <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-lg text-sakura-blue shadow-sm mr-3 group-hover:scale-110 transition"><i class="fas fa-bus"></i></div>
+                        <div class="flex-1">
+                            <span class="font-black block text-gray-700 text-sm">${item.Title}</span>
+                            <div class="flex justify-between text-xs mt-1 font-bold text-blue-400">
+                                <span class="bg-white/60 px-2 py-0.5 rounded-full"><i class="far fa-clock mr-1"></i>${displayTime}</span>
+                                <span>${item.Subtitle}</span>
+                            </div>
+                            ${noteHtml}
+                        </div>
+                    </div>
+                `;
+            } else if (t === 'food') {
+                iconClass = "bg-orange-50 text-orange-400 border-orange-200";
+                iconContent = '<i class="fas fa-utensils"></i>';
+            } else if (t === 'shop') {
+                iconClass = "bg-blue-50 text-blue-400 border-blue-200";
+                iconContent = '<i class="fas fa-shopping-bag"></i>';
+            } else if (t === 'stay') {
+                iconClass = "bg-purple-50 text-purple-400 border-purple-200";
+                iconContent = '<i class="fas fa-bed"></i>';
+            } else if (t === 'plane') {
+                iconClass = "bg-sky-50 text-sky-400 border-sky-200";
+                iconContent = '<i class="fas fa-plane"></i>';
+            } else {
+                iconClass = "bg-sakura-bg text-sakura-primary border-pink-200";
+                iconContent = '<i class="fas fa-camera"></i>';
+            }
+
+            return `
+                <div class="timeline-item">
+                    <div class="time-bubble">${displayTime}</div>
+                    <div class="timeline-dot ${iconClass} border-2 w-9 h-9 flex items-center justify-center rounded-full shadow-sm text-sm z-10">
+                        ${iconContent}
+                    </div>
+                    <div class="flex flex-col pt-1">
+                        <span class="font-black text-base text-gray-700 leading-tight">
+                            ${item.Title} ${linkHtml}
+                        </span>
+                        ${item.Subtitle ? `<span class="text-xs text-gray-400 font-bold mt-0.5">${item.Subtitle}</span>` : ''}
+                        ${addressHtml}
+                        ${noteHtml}
+                    </div>
+                </div>
+            `;
+        }
+
+        // ================= Checklist Logic =================
+        function renderChecklist(excelItems) {
+            const excelContainer = document.getElementById('checklist-excel-container');
+            const customContainer = document.getElementById('checklist-custom-container');
+            const savedChecks = JSON.parse(localStorage.getItem('seoulChecklist')) || {};
+            const savedCustomItems = JSON.parse(localStorage.getItem('seoulCustomItems')) || [];
+            
+            if (excelItems.length === 0) {
+                excelContainer.innerHTML = '<div class="text-center text-gray-300 text-xs py-2">無 Excel 資料</div>';
+            } else {
+                excelContainer.innerHTML = excelItems.map(item => createCheckItemHTML(item, savedChecks[item], false)).join('');
+            }
+
+            if (savedCustomItems.length === 0) {
+                customContainer.innerHTML = '<div class="text-center text-gray-300 text-xs py-2">尚未新增項目</div>';
+            } else {
+                customContainer.innerHTML = savedCustomItems.map(item => createCheckItemHTML(item, savedChecks[item], true)).join('');
+            }
+        }
+
+        function createCheckItemHTML(item, isChecked, isCustom) {
+            const checkedClass = isChecked ? 'checked' : '';
+            const deleteBtn = isCustom ? `<button onclick="deleteCustomItem('${item}')" class="ml-2 text-gray-300 hover:text-red-400 p-2"><i class="fas fa-times"></i></button>` : '';
+            
+            return `
+                <div class="check-item ${checkedClass} flex items-center p-3 cursor-pointer hover:border-sakura-mint shadow-sm mb-2">
+                    <div class="flex-1 flex items-center" onclick="toggleCheck('${item}')">
+                        <div class="mr-3 text-xl flex-shrink-0 transition-transform active:scale-90">
+                            <i class="far fa-square text-gray-200 rounded-md"></i>
+                            <i class="fas fa-check-square text-sakura-mint text-xl shadow-green-100 drop-shadow-sm"></i>
+                        </div>
+                        <span class="font-bold text-gray-600 text-sm select-none">${item}</span>
+                    </div>
+                    ${deleteBtn}
+                </div>
+            `;
+        }
+
+        function toggleCheck(item) {
+            const savedChecks = JSON.parse(localStorage.getItem('seoulChecklist')) || {};
+            savedChecks[item] = !savedChecks[item];
+            localStorage.setItem('seoulChecklist', JSON.stringify(savedChecks));
+            
+            const spans = document.querySelectorAll('.check-item span');
+            spans.forEach(span => {
+                if (span.textContent === item) {
+                    const parent = span.closest('.check-item');
+                    if(savedChecks[item]) parent.classList.add('checked');
+                    else parent.classList.remove('checked');
+                }
+            });
+        }
+
+        function addCustomItem() {
+            const input = document.getElementById('new-item-input');
+            const val = input.value.trim();
+            if (!val) return;
+
+            const savedCustomItems = JSON.parse(localStorage.getItem('seoulCustomItems')) || [];
+            if (!savedCustomItems.includes(val)) {
+                savedCustomItems.push(val);
+                localStorage.setItem('seoulCustomItems', JSON.stringify(savedCustomItems));
+                location.reload(); 
+            }
+            input.value = '';
+        }
+
+        function deleteCustomItem(item) {
+            if(!confirm(`確定刪除「${item}」嗎？`)) return;
+            let savedCustomItems = JSON.parse(localStorage.getItem('seoulCustomItems')) || [];
+            savedCustomItems = savedCustomItems.filter(i => i !== item);
+            localStorage.setItem('seoulCustomItems', JSON.stringify(savedCustomItems));
+            
+            const savedChecks = JSON.parse(localStorage.getItem('seoulChecklist')) || {};
+            delete savedChecks[item];
+            localStorage.setItem('seoulChecklist', JSON.stringify(savedChecks));
+            location.reload();
+        }
+
+        function resetChecklist() {
+            if(confirm('重置所有勾選狀態？')) {
+                localStorage.removeItem('seoulChecklist');
+                location.reload();
+            }
+        }
+
+        function updateExpensePreview() {
+            const krw = document.getElementById('cost').value;
+            const rate = document.getElementById('rate-input').value || 42.5;
+            const previewDiv = document.getElementById('expense-twd-preview');
+            const previewAmount = document.getElementById('preview-amount');
+
+            if (krw && krw > 0) {
+                const twd = Math.round(krw / rate);
+                previewAmount.textContent = twd.toLocaleString();
+                previewDiv.classList.remove('hidden');
+            } else {
+                previewDiv.classList.add('hidden');
+            }
+        }
+
+        const form = document.getElementById('expense-form');
+        const messageArea = document.getElementById('message-area');
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            if (scriptURL === '' || scriptURL === 'YOUR_NEW_GOOGLE_SCRIPT_URL') { showMessage('請設定 Script URL', 'error'); return; }
+            const btn = form.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>'; btn.disabled = true;
+            
+            const currentRate = document.getElementById('rate-input').value || 42.5;
+            const krwCost = document.getElementById('cost').value;
+            
+            const data = { 
+                item: document.getElementById('item').value, 
+                cost: krwCost, 
+                costTwd: Math.round(krwCost / currentRate), 
+                rate: currentRate,
+                payer: document.querySelector('input[name="payer"]:checked').value 
+            };
+            
+            fetch(scriptURL, { method: 'POST', body: JSON.stringify(data), mode: 'no-cors', headers: { 'Content-Type': 'application/json' } })
+            .then(() => { showMessage('🎉 記帳成功！', 'success'); form.reset(); document.getElementById('expense-twd-preview').classList.add('hidden'); })
+            .catch(() => showMessage('😥 錯誤', 'error'))
+            .finally(() => { btn.innerHTML = originalText; btn.disabled = false; });
+        });
+
+        function showMessage(msg, type) { 
+            messageArea.innerHTML = msg; 
+            messageArea.className = `p-4 rounded-xl text-center text-sm font-bold transition-all shadow-sm border transform scale-100 ${type === 'success' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'}`;
+            messageArea.classList.remove('hidden');
+            setTimeout(() => { messageArea.classList.add('hidden'); }, 3000); 
+        }
+
+        const krwInput = document.getElementById('krw-input'); 
+        const twdInput = document.getElementById('twd-input'); 
+        const rateInput = document.getElementById('rate-input');
+        function calculateExchange() { 
+            const rate = rateInput.value || 42.5; 
+            if(krwInput.value) twdInput.value = Math.round(krwInput.value / rate).toLocaleString();
+            else twdInput.value = '';
+            updateExpensePreview();
+        }
+        krwInput.addEventListener('input', calculateExchange);
+        rateInput.addEventListener('change', calculateExchange);
+        function fetchLiveRate() {
+            document.getElementById('rate-loading').classList.add('fa-spin');
+            fetch('https://api.exchangerate-api.com/v4/latest/TWD').then(r => r.json()).then(d => { 
+                if (d.rates.KRW) { rateInput.value = d.rates.KRW.toFixed(2); calculateExchange(); showMessage('匯率更新', 'success'); } 
+            }).finally(() => document.getElementById('rate-loading').classList.remove('fa-spin'));
+        }
+
+        function fetchWeather() {
+            const apiUrl = 'https://api.open-meteo.com/v1/forecast?latitude=37.5665&longitude=126.9780&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=Asia%2FTokyo&forecast_days=5';
+            fetch(apiUrl).then(r => r.json()).then(data => {
+                for (let i = 0; i < 5; i++) {
+                    const dayNum = i + 1;
+                    const code = data.daily.weather_code[i];
+                    const min = Math.round(data.daily.temperature_2m_min[i]);
+                    const max = Math.round(data.daily.temperature_2m_max[i]);
+                    
+                    const iconEl = document.getElementById(`weather-icon-day${dayNum}`);
+                    const textEl = document.getElementById(`weather-text-day${dayNum}`);
+                    const adviceEl = document.getElementById(`weather-advice-day${dayNum}`);
+                    
+                    if(iconEl && textEl) {
+                        iconEl.innerHTML = getWeatherIcon(code);
+                        textEl.innerHTML = `${min}°C ~ ${max}°C | ${getWeatherDesc(code)}`;
+                    }
+                    if(adviceEl) {
+                        adviceEl.innerText = getWeatherAdvice(code, min, max);
+                    }
+                }
+            });
+        }
+        
+        function getWeatherAdvice(code, min, max) {
+            let advice = [];
+            if ([51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82, 95, 96, 99].includes(code)) {
+                advice.push("☔ 帶雨具");
+            } else if ([71, 73, 75, 77, 85, 86].includes(code)) {
+                advice.push("❄️ 下雪了");
+            }
+            if (max <= 5) {
+                advice.push("🧣 極凍!帶暖暖包");
+            } else if (max <= 10) {
+                advice.push("🧥 穿大衣");
+            } 
+            return advice.join(" | ");
+        }
+
+        function getWeatherIcon(code) {
+            if (code === 0) return '☀️'; 
+            if (code >= 1 && code <= 3) return '⛅'; 
+            if (code >= 51) return '🌧️'; 
+            if (code >= 71) return '❄️';
+            return '☁️';
+        }
+        function getWeatherDesc(code) {
+            if (code === 0) return '晴朗';
+            if (code >= 1 && code <= 3) return '多雲';
+            if (code >= 71) return '下雪';
+            if (code >= 51) return '有雨';
+            return '陰天';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+             fetchLiveRate();
+             fetchWeather();
+             fetchData(); 
+        });
+    </script>
+</body>
+</html>
